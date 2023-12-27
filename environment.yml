@@ -1,0 +1,20 @@
+name: stabilityai
+# conda is used for the environment and pip is used to manage/install dependencies and
+# packages. Instead of using conda to do so, we used pip which is consistent with the
+# tools used in the repo.
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  # Uae Python 3.10
+  - python==3.10
+  #c++ library for multi threading.
+  - boost-cpp
+  - libboost
+  #python package installation tool
+  - pip
+  #requirement from source code
+  - pip: #(reference from pyproject.toml)
+  # include dependencies using pip. extra index url = default ones + the specified one
+    - --extra-index-url https://download.pytorch.org/whl/cu118
+    - -r ./requirements/pt2.txt

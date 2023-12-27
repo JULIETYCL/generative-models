@@ -1,3 +1,4 @@
+accelerate
 black==23.7.0
 chardet==5.1.0
 clip @ git+https://github.com/openai/CLIP.git
@@ -7,6 +8,7 @@ fire>=0.5.0
 fsspec>=2023.6.0
 invisible-watermark>=0.2.0
 kornia==0.6.9
+langchain
 matplotlib>=3.7.2
 natsort>=8.4.0
 ninja>=1.11.1
@@ -17,24 +19,28 @@ opencv-python==4.6.0.66
 pandas>=2.0.3
 pillow>=9.5.0
 pudb>=2022.1.3
+pyarrow
 pytorch-lightning==2.0.1
 pyyaml>=6.0.1
+PyWavelets
+safetensors
 scipy>=1.10.1
 streamlit>=0.73.1
+streamlit-keyup==0.2.0
 tensorboardx==2.6
 timm>=0.9.2
 tokenizers==0.12.1
-torch>=2.0.1
-torchaudio>=2.0.2
+torch==2.0.1+cu118
+torchaudio==2.0.2+cu118
 torchdata==0.6.1
 torchmetrics>=1.0.1
-torchvision>=0.15.2
+torchvision==0.15.2+cu118
 tqdm>=4.65.0
+transformers
 transformers==4.19.1
-triton==2.0.0
+https://huggingface.co/r4ziel/xformers_pre_built/resolve/main/triton-2.0.0-cp310-cp310-win_amd64.whl
 urllib3<1.27,>=1.25.4
 wandb>=0.15.6
 webdataset>=0.2.33
 wheel>=0.41.0
 xformers>=0.0.20
-streamlit-keyup==0.2.0
