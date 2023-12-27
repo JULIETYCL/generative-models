@@ -92,6 +92,9 @@ VERSION2SPECS = {
 
 if __name__ == "__main__":
     st.title("Stable Video Diffusion")
+
+    set_lowvram_mode(st.checkbox("Low vram mode", True))
+
     version = st.selectbox(
         "Model Version",
         [k for k in VERSION2SPECS.keys()],
@@ -138,9 +141,13 @@ if __name__ == "__main__":
             cond_aug = st.number_input(
                 "Conditioning augmentation:", value=0.02, min_value=0.0
             )
-            value_dict["cond_frames_without_noise"] = img
-            value_dict["cond_frames"] = img + cond_aug * torch.randn_like(img)
-            value_dict["cond_aug"] = cond_aug
+            try:
+                value_dict["cond_frames_without_noise"] = img
+                value_dict["cond_frames"] = img + cond_aug * torch.randn_like(img)
+                value_dict["cond_aug"] = cond_aug
+            except:
+                # Ignore error if img isn't set yet
+                pass
 
         seed = st.sidebar.number_input(
             "seed", value=23, min_value=0, max_value=int(1e9)
