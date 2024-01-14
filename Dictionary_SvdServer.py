@@ -9,7 +9,9 @@ import re
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import cgi
+from urllib.parse import urlparse, parse_qs
 
+import Dictionary_SdxlEngine
 import Dictionary_SvdEngine
 
 hostName = '0.0.0.0'
@@ -21,7 +23,25 @@ sdxl_engine = None
 class Dictionary_SvdServer(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        if self.path.startswith('/vid/'):
+        if self.path.startswith('/img/'):
+            # Generate image based on the prompt
+            query_components = parse_qs(urlparse(self.path).query)
+            prompt = query_components["prompt"][0]
+            seed = None
+            steps = 40
+            if "seed" in query_components:
+                seed = int(query_components["seed"][0])
+            if "steps" in query_components:
+                steps = int(query_components["steps"][0])
+            image_bytes = self.generate_image(prompt, seed = seed, steps = steps)
+            if image_bytes:
+                self.send_response(200)
+                self.send_header("Content-Type", "image/png")
+                self.send_header("Content-Disposition", "inline")
+                self.send_header("Content-Length", len(image_bytes))
+                self.end_headers()
+                self.wfile.write(image_bytes)
+        elif self.path.startswith('/vid/'):
             # Retrieve the previously generated video
             self.serve_video()
 
@@ -51,6 +71,10 @@ class Dictionary_SvdServer(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(bytes("<html><body><h1>POST!</h1></body></html>", "utf-8"))
 
+    def generate_image(self, prompt, seed = None, steps = 40):
+        print('Generating video for prompt: {}'.format(prompt))
+        return sdxl_engine.generate_image(prompt, seed = seed, steps = steps)
+
     def generate_video(self, image):
         print(f"Generating video for image")
         return svd_engine.generate_video(image)
@@ -64,6 +88,9 @@ if __name__ == "__main__":
 
     # Create the SVD engine
     svd_engine = Dictionary_SvdEngine.Dictionary_SvdEngine()
+
+    # Create the SDXL engine
+    sdxl_engine = Dictionary_SdxlEngine.Dictionary_SdxlEngine()
 
     # Create and start the web server
     webServer = HTTPServer((hostName, serverPort), Dictionary_SvdServer)

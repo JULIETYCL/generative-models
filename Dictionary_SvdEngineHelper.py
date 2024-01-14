@@ -203,7 +203,7 @@ class Dictionary_SvdEngineHelper:
         return discretization_config
 
     def get_guider(self, options, key):
-        guider = options.get("guider", "IdentityGuider")
+        guider = options.get("guider", "VanillaCFG")
 
         additional_guider_kwargs = options.pop("additional_guider_kwargs", {})
 
@@ -343,6 +343,7 @@ class Dictionary_SvdEngineHelper:
         specify_num_samples: bool = True,
         stage2strength: Optional[float] = None,
         options: Optional[Dict[str, int]] = None,
+        default_steps = 40
     ):
         options = {} if options is None else options
 
@@ -350,9 +351,9 @@ class Dictionary_SvdEngineHelper:
         if specify_num_samples:
             num_cols = num_cols
 
-        steps = options.get("num_steps", 40)
+        steps = options.get("num_steps", default_steps)
         sampler = options.get("sampler", "EulerEDMSampler")
-        discretization = options.get("discretization", "EDMDiscretization")
+        discretization = options.get("discretization", "LegacyDDPMDiscretization")
 
         discretization_config = self.get_discretization(discretization, options=options, key=key)
 
