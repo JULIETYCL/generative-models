@@ -135,9 +135,13 @@ class Dictionary_SvdEngine:
 
         if self.save_locally:
             saving_fps = self.value_dict["fps"]
-            video_bytes = self._save_video_as_grid_and_mp4(samples, self.save_path, self.T, fps=saving_fps)
-            return video_bytes
+            (video_path, video_bytes) = self._save_video_as_grid_and_mp4(samples, self.save_path, self.T, fps=saving_fps)
+            return (video_path, video_bytes)
 
+    def get_video(self, video_id):
+        video_path = os.path.join(self.save_path, f"{video_id}.mp4")
+        with open(video_path, 'rb') as f:
+            return f.read()
 
     def _save_video_as_grid_and_mp4(self,
             video_batch: torch.Tensor, save_path: str, T: int, fps: int = 5
@@ -148,8 +152,6 @@ class Dictionary_SvdEngine:
             video_batch = rearrange(video_batch, "(b t) c h w -> b t c h w", t=T)
             # video_batch = embed_watermark(video_batch)
             for vid in video_batch:
-                # save_image(vid, fp=os.path.join(save_path, f"{base_count:06d}.png"), nrow=4)
-
                 video_path = os.path.join(save_path, f"{base_count:06d}.mp4")
 
                 writer = cv2.VideoWriter(
@@ -168,12 +170,12 @@ class Dictionary_SvdEngine:
                 finally:
                     writer.release()
 
-                # video_path_h264 = video_path[:-4] + "_h264.mp4"
-                # os.system(f"ffmpeg -i {video_path} -c:v libx264 {video_path_h264}")
+                video_path_h264 = video_path[:-4] + "_h264.mp4"
+                os.system(f"ffmpeg -i {video_path} -c:v libx264 {video_path_h264}")
 
-                with open(video_path, "rb") as f:
+                with open(video_path_h264, "rb") as f:
                     video_bytes = f.read()
 
                 base_count += 1
 
-                return video_bytes
+                return (video_path_h264, video_bytes)
